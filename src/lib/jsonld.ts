@@ -36,7 +36,7 @@ export function barJsonLd() {
     url: site.url,
     image: [`${site.url}/og.png`, `${site.url}/favicon.png`],
     logo: `${site.url}/favicon.png`,
-    telephone: site.telephone,
+    telephone: [site.telephone, site.mobile],
     priceRange: site.priceRange,
     servesCuisine: ['Italiana', 'Bar', 'Hamburger', 'Cocktail'],
     menu: `${site.url}/menu`,
@@ -98,7 +98,7 @@ export function faqJsonLd() {
         name: 'Dove si trova il bar Dai Ragazzi a Carmagnola?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `${site.address.display}. Telefono ${site.telephoneDisplay}.`,
+          text: `${site.address.display}. Telefono ${site.telephoneDisplay}, cellulare ${site.mobileDisplay}.`,
         },
       },
     ],

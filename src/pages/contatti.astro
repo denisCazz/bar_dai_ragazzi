@@ -5,7 +5,7 @@ import { site } from '../data/site';
 import { barJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
 
 const title = 'Contatti';
-const description = `Bar Dai Ragazzi, ${site.address.display}. Telefono ${site.telephoneDisplay}. Prenota un tavolo, chiedi gli orari o passa in piazza.`;
+const description = `Bar Dai Ragazzi, ${site.address.display}. Telefono ${site.telephoneDisplay}, cellulare ${site.mobileDisplay}. Prenota un tavolo, chiedi gli orari o passa in piazza.`;
 const jsonLd = [
   barJsonLd(),
   websiteJsonLd(),
@@ -41,6 +41,10 @@ const jsonLd = [
         <div>
           <dt>Telefono</dt>
           <dd><a href={`tel:${site.telephone}`}>{site.telephoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>Cellulare</dt>
+          <dd><a href={`tel:${site.mobile}`}>{site.mobileDisplay}</a></dd>
         </div>
         <div>
           <dt>WhatsApp</dt>

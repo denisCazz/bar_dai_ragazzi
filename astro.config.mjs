@@ -2,7 +2,7 @@
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-const site = 'https://dairagazzi.bitora.it';
+const site = 'https://garavella7.bitora.it';
 const gestionale =
   process.env.PUBLIC_GESTIONALE_URL || 'http://localhost:3000';
 

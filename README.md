@@ -13,12 +13,12 @@ npm run dev
 
 Il `Dockerfile` costruisce il sito statico con Node 22 Alpine e lo serve con Nginx sulla porta **80**.
 
-Domini attuali: sito `dairagazzi.bitora.it`, gestionale `gestionaledairagazzi.bitora.it`.
+Domini attuali: sito `garavella7.bitora.it`, gestionale `gestionalegaravella7.bitora.it`.
 
 In Coolify, variabile di build:
 
 ```
-PUBLIC_GESTIONALE_URL=https://gestionaledairagazzi.bitora.it
+PUBLIC_GESTIONALE_URL=https://gestionalegaravella7.bitora.it
 ```
 
 Deve essere **https**, altrimenti il browser blocca il menu (mixed content). Nginx fa da proxy su `/api/public/menu`, così la pagina si aggiorna dal gestionale senza ricompilare il sito.

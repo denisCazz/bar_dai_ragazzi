@@ -6,12 +6,14 @@ export const site = {
     'Colazioni, pranzi e aperitivi in Piazza Garavella a Carmagnola.',
   description:
     'Bar Dai Ragazzi a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
-  url: 'https://dairagazzi.bitora.it',
+  url: 'https://garavella7.bitora.it',
   lang: 'it',
   locale: 'it_IT',
-  telephone: '+390113828517',
-  telephoneDisplay: '011 382 8517',
-  whatsapp: 'https://wa.me/390113828517',
+  telephone: '+390110860110',
+  telephoneDisplay: '011 086 0110',
+  mobile: '+393802605646',
+  mobileDisplay: '380 260 5646',
+  whatsapp: 'https://wa.me/390110860110',
   priceRange: '€',
   foundingHint: 'Bar, tavola calda, hamburgeria e cocktail in centro a Carmagnola.',
   address: {

@@ -23,7 +23,7 @@ export const comingSoonCopy =
 
 export const PUBLIC_MENU_PATH = '/api/public/menu';
 
-const PRODUCTION_GESTIONALE_URL = 'https://gestionaledairagazzi.bitora.it';
+const PRODUCTION_GESTIONALE_URL = 'https://gestionalegaravella7.bitora.it';
 
 /** Usato solo se il gestionale non risponde. */
 export const fallbackMenu: PublicMenuSection[] = [

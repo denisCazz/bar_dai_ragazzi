@@ -49,6 +49,10 @@ body {
   color: var(--cream);
 }
 
+body.nav-open {
+  overflow: hidden;
+}
+
 body::before {
   content: '';
   position: fixed;
