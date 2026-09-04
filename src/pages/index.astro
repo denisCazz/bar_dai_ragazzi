@@ -1,0 +1,406 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Shell from '../components/Shell.astro';
+import { aperitivi, site } from '../data/site';
+import { barJsonLd, faqJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
+
+const description = site.description;
+const jsonLd = [
+  barJsonLd(),
+  websiteJsonLd(),
+  webpageJsonLd({ path: '/', title: `${site.name} · ${site.tagline}`, description }),
+  faqJsonLd(),
+];
+---
+
+<Layout
+  title={site.name}
+  description={description}
+  path="/"
+  jsonLd={jsonLd}
+  breadcrumbs={[{ name: 'Home', path: '/' }]}
+>
+  <Shell>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker">Bar · Carmagnola</p>
+          <h1>
+            <span class="line-one">Less stress,</span>
+            <span class="line-two">more spritz!</span>
+          </h1>
+          <p class="lead">
+            Colazioni, pranzi e aperitivi in Piazza Garavella. Ambiente accogliente, cucina casareccia, cocktail e
+            taglieri. Dalla brioche del mattino all’ultimo spritz.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="#aperitivi">Scopri i nostri aperitivi</a>
+            <a class="btn btn-ghost" href="/menu">Vedi il menu</a>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <figure class="hero-photo">
+            <img
+              src="/aperol-spritz.jpg"
+              width="938"
+              height="1400"
+              alt="Due spritz serviti al tavolo"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <figcaption>Aperitivo, ogni giorno.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="track">
+        {Array.from({ length: 8 }).map(() => (
+          <span>Less stress · more spritz · colazione · hamburger · aperitivo · cocktail · Carmagnola ·</span>
+        ))}
+      </div>
+    </div>
+
+    <section class="section aperitivo-band" id="aperitivi">
+      <div class="wrap">
+        <p class="kicker">Aperitivo time</p>
+        <h2>Scopri i nostri aperitivi</h2>
+        <div class="tickets">
+          {aperitivi.map((item) => (
+            <article class:list={['ticket', item.highlight && 'featured']}>
+              <p class="when">{item.when}</p>
+              <h3>{item.title}</h3>
+              <p class="time">{item.time}</p>
+              <p class="price">
+                <span>{item.price}€</span>
+                <small>{item.note}</small>
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap locale">
+      <figure class="locale-photo">
+        <img
+          src="/bar-interior.jpg"
+          width="933"
+          height="700"
+          alt="Interno accogliente di un cocktail bar"
+          loading="lazy"
+        />
+      </figure>
+      <div class="locale-copy">
+        <p class="score">{site.rating.value}</p>
+        <p class="kicker">Su Google</p>
+        <h2>Il locale sotto casa, senza stress.</h2>
+        <p class="muted">
+          {site.rating.count} recensioni, media {site.rating.value}/5. Ambiente accogliente, apericena e un rapporto
+          qualità-prezzo che fa tornare.
+        </p>
+      </div>
+    </section>
+
+    <section class="section wrap visit">
+      <div>
+        <p class="kicker">Vieni a trovarci</p>
+        <h2>{site.address.display}</h2>
+        <p class="muted">{site.hours.display}</p>
+        <div class="hero-actions">
+          <a class="btn" href={`tel:${site.telephone}`}>Chiama {site.telephoneDisplay}</a>
+          <a class="btn btn-ghost" href="/contatti">Indicazioni</a>
+        </div>
+      </div>
+      <div class="map-card">
+        <iframe
+          title={`Mappa di ${site.name}`}
+          src={site.maps.embed}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+        <a href={site.maps.google} target="_blank" rel="noopener noreferrer">Apri in Google Maps</a>
+      </div>
+    </section>
+  </Shell>
+</Layout>
+
+<style>
+  .hero {
+    padding: 4.5rem 0 3.5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 10.5vw, 8.2rem);
+    margin: 1rem 0 1.4rem;
+    font-weight: 750;
+    line-height: 0.88;
+  }
+
+  .line-one {
+    display: block;
+    font-weight: 550;
+  }
+
+  .line-two {
+    display: block;
+    color: var(--gold);
+    font-weight: 800;
+  }
+
+  .lead {
+    max-width: 38rem;
+    color: var(--cream-muted);
+    font-size: 1.08rem;
+    overflow-wrap: break-word;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .hero-actions .btn {
+    flex: 1 1 100%;
+  }
+
+  .hero-aside {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-photo {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    border-radius: 1.5rem;
+  }
+
+  .hero-photo::after,
+  .locale-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 16%, transparent);
+    border-radius: inherit;
+  }
+
+  .hero-photo img,
+  .locale-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-photo img {
+    object-position: 50% 58%;
+  }
+
+  .hero-photo figcaption {
+    position: absolute;
+    z-index: 1;
+    left: 1rem;
+    bottom: 1rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--espresso) 84%, transparent);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+  }
+
+  .locale {
+    display: grid;
+    gap: 1.6rem;
+    align-items: center;
+  }
+
+  .locale-photo {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: 1.5rem;
+    min-height: 16rem;
+  }
+
+  .locale-photo img {
+    object-position: 42% 58%;
+  }
+
+  .locale-copy .score {
+    margin-bottom: 0.4rem;
+  }
+
+  .marquee {
+    overflow: hidden;
+    max-width: 100%;
+    border-block: 1px solid var(--line);
+    padding: 0.85rem 0;
+    color: var(--gold);
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .track {
+    display: flex;
+    width: max-content;
+    gap: 2rem;
+    animation: drift 38s linear infinite;
+  }
+
+  .section {
+    padding: 5rem 0;
+  }
+
+  .aperitivo-band h2,
+  .locale h2,
+  .visit h2 {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+    max-width: 14ch;
+  }
+
+  .aperitivo-band {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, transparent), transparent 40%),
+      var(--cocoa);
+    border-block: 1px solid var(--line);
+  }
+
+  .tickets {
+    display: grid;
+    gap: 1.2rem;
+    margin-top: 2.2rem;
+  }
+
+  .ticket {
+    border: 1px solid var(--line);
+    padding: 1.7rem 1.5rem 1.5rem;
+    background: color-mix(in srgb, var(--espresso) 55%, transparent);
+  }
+
+  .ticket.featured {
+    border-color: var(--gold);
+    background: color-mix(in srgb, var(--gold) 10%, var(--espresso));
+  }
+
+  .when {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .ticket h3 {
+    font-size: 2.4rem;
+    margin: 0.45rem 0 0.35rem;
+  }
+
+  .time {
+    color: var(--cream-muted);
+  }
+
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    margin-top: 1.3rem;
+  }
+
+  .price span {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: var(--gold);
+    line-height: 0.8;
+  }
+
+  .price small {
+    color: var(--cream-muted);
+    font-size: 0.88rem;
+    max-width: 18rem;
+  }
+
+  .score {
+    font-family: var(--font-display);
+    font-size: clamp(4.2rem, 10vw, 7rem);
+    color: var(--gold);
+    line-height: 0.75;
+  }
+
+  .visit {
+    display: grid;
+    gap: 2rem;
+    padding-bottom: 6rem;
+  }
+
+  .map-card {
+    min-height: 12rem;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background: var(--bark);
+  }
+
+  .map-card iframe {
+    display: block;
+    width: 100%;
+    min-height: 20rem;
+    border: 0;
+  }
+
+  .map-card a {
+    display: block;
+    padding: 1rem 1.2rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  @keyframes drift {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (min-width: 860px) {
+    .hero-aside {
+      justify-self: end;
+      max-width: 28rem;
+    }
+
+    .hero-actions .btn {
+      flex: 0 0 auto;
+    }
+
+    .hero-grid,
+    .tickets,
+    .locale,
+    .visit {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .locale {
+      gap: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#140c08"/>
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#c9a36a" stroke-width="1.5"/>
+  <text x="80" y="130" fill="#c9a36a" font-family="Georgia, serif" font-size="22" letter-spacing="8">CARMAGNOLA  ·  PIAZZA GARAVELLA</text>
+  <text x="80" y="300" fill="#f4eadc" font-family="Georgia, serif" font-size="92" font-style="italic">Less stress,</text>
+  <text x="80" y="410" fill="#c9a36a" font-family="Georgia, serif" font-size="92" font-style="italic">more spritz!</text>
+  <text x="80" y="540" fill="#f4eadc" font-family="Georgia, serif" font-size="48">Dai Ragazzi</text>
+</svg>

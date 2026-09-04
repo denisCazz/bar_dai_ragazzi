@@ -1,0 +1,98 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div>
+      <img class="footer-logo" src="/logo-garavella.png" width="92" height="136" alt="Garavella 7" />
+      <p class="kicker">Piazza Garavella</p>
+      <p class="footer-name">{site.name}</p>
+      <p class="muted">{site.tagline}</p>
+    </div>
+
+    <address>
+      <p>{site.address.street}</p>
+      <p>{site.address.postalCode} {site.address.city} ({site.address.region})</p>
+      <p>
+        <a href={`tel:${site.telephone}`}>{site.telephoneDisplay}</a>
+      </p>
+      <p>{site.hours.display}</p>
+    </address>
+
+    <nav aria-label="Social">
+      <a href={site.social.instagram} rel="noopener noreferrer" target="_blank">Instagram</a>
+      <a href={site.social.facebook} rel="noopener noreferrer" target="_blank">Facebook</a>
+      <a href={site.social.tiktok} rel="noopener noreferrer" target="_blank">TikTok</a>
+    </nav>
+  </div>
+
+  <div class="wrap legal">
+    <p>© {new Date().getFullYear()} {site.legalName}. Carmagnola.</p>
+    <p>Colazioni, pranzi, aperitivi e cocktail.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding: 4rem 0 2rem;
+    background: color-mix(in srgb, black 28%, var(--espresso));
+  }
+
+  .grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .footer-name {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    margin: 0.4rem 0 0.5rem;
+  }
+
+  .footer-logo {
+    width: 5.75rem;
+    height: auto;
+    margin-bottom: 1.4rem;
+  }
+
+  address {
+    font-style: normal;
+    color: var(--cream-muted);
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  nav a {
+    text-decoration: none;
+  }
+
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--cream-muted);
+    font-size: 0.82rem;
+  }
+
+  @media (min-width: 800px) {
+    .grid {
+      grid-template-columns: 1.4fr 1fr auto;
+      align-items: end;
+    }
+  }
+</style>

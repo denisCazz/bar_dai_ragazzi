@@ -1,0 +1,362 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Shell from '../components/Shell.astro';
+import { fetchPublicMenu, gestionaleUrl } from '../data/menu';
+import { site } from '../data/site';
+import { barJsonLd, menuJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
+
+const publicMenu = await fetchPublicMenu();
+const menu = publicMenu.categorie;
+const comingSoonCopy = publicMenu.comingSoonCopy;
+const apiBase = gestionaleUrl();
+
+const title = 'Menu';
+const description =
+  'Menu Dai Ragazzi a Carmagnola: aperitivi, colazione, pausa pranzo, cocktail e cantina. Buffet del venerdì e taglieri tutti i giorni.';
+const jsonLd = [
+  barJsonLd(),
+  websiteJsonLd(),
+  webpageJsonLd({ path: '/menu', title, description }),
+  menuJsonLd(menu),
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/menu"
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Menu', path: '/menu' },
+  ]}
+>
+  <Shell>
+    <section class="wrap page">
+      <header class="menu-hero">
+        <p class="kicker">La carta</p>
+        <h1>Menu</h1>
+        <p class="lead muted">
+          Quello che trovi al banco, aggiornato dal gestionale. Per allergie e intolleranze, chiedi a noi.
+        </p>
+      </header>
+
+      <div id="menu-root" data-api={apiBase} data-empty={comingSoonCopy}>
+        <nav class="toc" aria-label="Sezioni del menu">
+          {menu.map((section) => (
+            <a href={`#${section.id}`}>{section.title}</a>
+          ))}
+        </nav>
+
+        <div class="carta">
+          {menu.map((section, index) => (
+            <section class="block" id={section.id}>
+              <header>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h2>{section.title}</h2>
+                  {section.subtitle && <p class="muted">{section.subtitle}</p>}
+                </div>
+              </header>
+
+              {section.items.length > 0 ? (
+                <ul>
+                  {section.items.map((item) => (
+                    <li>
+                      <div class="dish">
+                        <h3>{item.name}</h3>
+                        <span class="dots" aria-hidden="true"></span>
+                        {item.price && <p class="price">{item.price}€</p>}
+                      </div>
+                      {item.description && <p class="desc">{item.description}</p>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="empty">{comingSoonCopy}</p>
+              )}
+            </section>
+          ))}
+        </div>
+      </div>
+
+      <p class="foot muted">
+        Prenotazioni: <a href={`tel:${site.telephone}`}>{site.telephoneDisplay}</a>
+        {' · '}
+        <a href={site.whatsapp} rel="noopener noreferrer">WhatsApp</a>
+      </p>
+    </section>
+  </Shell>
+</Layout>
+
+<script>
+  type Item = { name: string; description?: string; price?: string };
+  type Section = { id: string; title: string; subtitle?: string; items: Item[] };
+  type Menu = { comingSoonCopy: string; categorie: Section[] };
+
+  const root = document.getElementById('menu-root');
+  const api = root?.dataset.api;
+  if (root && api) {
+    fetch(`${api}/api/public/menu`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Menu | null) => {
+        if (!data?.categorie) return;
+        render(root, data);
+      })
+      .catch(() => {
+        /* resta il menu già renderizzato lato server */
+      });
+  }
+
+  function render(el: HTMLElement, data: Menu) {
+    const emptyCopy = data.comingSoonCopy || el.dataset.empty || '';
+    el.replaceChildren();
+
+    const toc = document.createElement('nav');
+    toc.className = 'toc';
+    toc.setAttribute('aria-label', 'Sezioni del menu');
+    for (const section of data.categorie) {
+      const a = document.createElement('a');
+      a.href = `#${section.id}`;
+      a.textContent = section.title;
+      toc.append(a);
+    }
+    el.append(toc);
+
+    const carta = document.createElement('div');
+    carta.className = 'carta';
+
+    data.categorie.forEach((section, index) => {
+      const block = document.createElement('section');
+      block.className = 'block';
+      block.id = section.id;
+
+      const header = document.createElement('header');
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = String(index + 1).padStart(2, '0');
+      const titles = document.createElement('div');
+      const h2 = document.createElement('h2');
+      h2.textContent = section.title;
+      titles.append(h2);
+      if (section.subtitle) {
+        const sub = document.createElement('p');
+        sub.className = 'muted';
+        sub.textContent = section.subtitle;
+        titles.append(sub);
+      }
+      header.append(num, titles);
+      block.append(header);
+
+      if (section.items.length > 0) {
+        const ul = document.createElement('ul');
+        for (const item of section.items) {
+          const li = document.createElement('li');
+          const dish = document.createElement('div');
+          dish.className = 'dish';
+          const h3 = document.createElement('h3');
+          h3.textContent = item.name;
+          const dots = document.createElement('span');
+          dots.className = 'dots';
+          dots.setAttribute('aria-hidden', 'true');
+          dish.append(h3, dots);
+          if (item.price) {
+            const price = document.createElement('p');
+            price.className = 'price';
+            price.textContent = `${item.price}€`;
+            dish.append(price);
+          }
+          li.append(dish);
+          if (item.description) {
+            const desc = document.createElement('p');
+            desc.className = 'desc';
+            desc.textContent = item.description;
+            li.append(desc);
+          }
+          ul.append(li);
+        }
+        block.append(ul);
+      } else {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = emptyCopy;
+        block.append(empty);
+      }
+
+      carta.append(block);
+    });
+
+    el.append(carta);
+  }
+</script>
+
+<style>
+  .page {
+    padding: 3.5rem 0 6rem;
+  }
+
+  .menu-hero {
+    margin-bottom: 2.2rem;
+  }
+
+  h1 {
+    font-size: clamp(3.4rem, 10vw, 7rem);
+    margin: 0.35rem 0 0.85rem;
+    line-height: 0.88;
+  }
+
+  .lead {
+    max-width: 32rem;
+  }
+
+  :global(#menu-root .toc) {
+    position: sticky;
+    top: calc(var(--header-h) - 1px);
+    z-index: 12;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin: 0 -0.25rem 1.4rem;
+    padding: 0.7rem 0.25rem;
+    background: color-mix(in srgb, var(--espresso) 88%, transparent);
+    backdrop-filter: blur(14px);
+    scrollbar-width: none;
+  }
+
+  :global(#menu-root .toc::-webkit-scrollbar) {
+    display: none;
+  }
+
+  :global(#menu-root .toc a) {
+    flex: 0 0 auto;
+    padding: 0.55rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--cocoa);
+    color: var(--cream);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  :global(#menu-root .toc a:hover) {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  :global(#menu-root .carta) {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 1.6rem;
+    padding: 0.4rem 1.15rem 1.15rem;
+    box-shadow: 0 24px 50px color-mix(in srgb, black 28%, transparent);
+  }
+
+  :global(#menu-root .block) {
+    padding: 1.6rem 0.15rem 1.7rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    scroll-margin-top: calc(var(--header-h) + 4.2rem);
+  }
+
+  :global(#menu-root .block:last-child) {
+    border-bottom: 0;
+  }
+
+  :global(#menu-root .block header) {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    margin-bottom: 1.15rem;
+  }
+
+  :global(#menu-root .num) {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+  }
+
+  :global(#menu-root .block h2) {
+    font-size: clamp(1.7rem, 4vw, 2.35rem);
+    color: var(--ink);
+    letter-spacing: -0.04em;
+  }
+
+  :global(#menu-root .carta .muted) {
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
+    margin-top: 0.15rem;
+  }
+
+  :global(#menu-root ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  :global(#menu-root .dish) {
+    display: grid;
+    grid-template-columns: auto minmax(1.5rem, 1fr) auto;
+    gap: 0.55rem;
+    align-items: baseline;
+  }
+
+  :global(#menu-root li h3) {
+    font-size: 1.12rem;
+    font-family: var(--font-body);
+    font-weight: 750;
+    letter-spacing: -0.02em;
+  }
+
+  :global(#menu-root .dots) {
+    border-bottom: 1px dotted color-mix(in srgb, var(--ink) 28%, transparent);
+    min-width: 1.2rem;
+    transform: translateY(-0.28em);
+  }
+
+  :global(#menu-root .price) {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--gold-dim);
+    white-space: nowrap;
+  }
+
+  :global(#menu-root .desc) {
+    margin-top: 0.2rem;
+    color: color-mix(in srgb, var(--ink) 58%, transparent);
+    font-size: 0.92rem;
+    max-width: 38rem;
+  }
+
+  :global(#menu-root .empty) {
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
+    font-size: 0.98rem;
+    padding: 0.9rem 1rem;
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: 0.9rem;
+  }
+
+  .foot {
+    margin-top: 1.8rem;
+  }
+
+  @media (min-width: 860px) {
+    :global(#menu-root .carta) {
+      padding: 0.5rem 2rem 1.6rem;
+    }
+
+    :global(#menu-root ul) {
+      gap: 1.15rem;
+    }
+
+    :global(#menu-root li h3) {
+      font-size: 1.22rem;
+    }
+  }
+</style>

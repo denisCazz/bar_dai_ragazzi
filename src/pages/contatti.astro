@@ -1,0 +1,143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Shell from '../components/Shell.astro';
+import { site } from '../data/site';
+import { barJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
+
+const title = 'Contatti';
+const description = `Bar Dai Ragazzi, ${site.address.display}. Telefono ${site.telephoneDisplay}. Prenota un tavolo, chiedi gli orari o passa in piazza.`;
+const jsonLd = [
+  barJsonLd(),
+  websiteJsonLd(),
+  webpageJsonLd({ path: '/contatti', title, description }),
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/contatti"
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Contatti', path: '/contatti' },
+  ]}
+>
+  <Shell>
+    <section class="wrap page">
+      <p class="kicker">Piazza Garavella, 7</p>
+      <h1>Vieni Dai Ragazzi.</h1>
+      <p class="lead muted">
+        Siamo in centro a Carmagnola. Colazione, pausa pranzo, aperitivo. Una telefonata basta per un tavolo.
+      </p>
+
+      <dl>
+        <div>
+          <dt>Indirizzo</dt>
+          <dd>
+            <a href={site.maps.google} rel="noopener noreferrer">{site.address.display}</a>
+          </dd>
+        </div>
+        <div>
+          <dt>Telefono</dt>
+          <dd><a href={`tel:${site.telephone}`}>{site.telephoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>WhatsApp</dt>
+          <dd><a href={site.whatsapp} rel="noopener noreferrer">Scrivici</a></dd>
+        </div>
+        <div>
+          <dt>Orari</dt>
+          <dd>
+            {site.hours.display}
+            <span class="note">{site.hours.note}</span>
+          </dd>
+        </div>
+      </dl>
+
+      <iframe
+        title={`Mappa ${site.name}`}
+        src={site.maps.embed}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+
+      <div class="social">
+        <a href={site.social.instagram} rel="noopener noreferrer" target="_blank">Instagram</a>
+        <a href={site.social.facebook} rel="noopener noreferrer" target="_blank">Facebook</a>
+        <a href={site.social.tiktok} rel="noopener noreferrer" target="_blank">TikTok</a>
+      </div>
+    </section>
+  </Shell>
+</Layout>
+
+<style>
+  .page {
+    padding: 4.5rem 0 6rem;
+  }
+
+  h1 {
+    font-size: clamp(3.2rem, 10vw, 6.5rem);
+    max-width: 10ch;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .lead {
+    max-width: 34rem;
+    margin-bottom: 2.5rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 1.4rem;
+    margin: 0 0 2.5rem;
+  }
+
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .note {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--cream-muted);
+    font-size: 0.9rem;
+  }
+
+  iframe {
+    width: 100%;
+    height: 360px;
+    border: 1px solid var(--line);
+    filter: grayscale(0.35) contrast(0.95) sepia(0.25);
+  }
+
+  .social {
+    display: flex;
+    gap: 1.4rem;
+    margin-top: 1.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .social a {
+    text-decoration: none;
+    color: var(--gold);
+  }
+
+  @media (min-width: 800px) {
+    dl {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/manrope';
+import { site } from '../data/site';
+
+export const prerender = true;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>OG {site.name}</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #10241e;
+        color: #fff8e9;
+        font-family: 'Bricolage Grotesque Variable', sans-serif;
+      }
+      .card {
+        width: 1200px;
+        height: 630px;
+        box-sizing: border-box;
+        padding: 56px 70px;
+        border: 18px solid #10241e;
+        outline: 2px solid #ff7043;
+        outline-offset: -36px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .kicker {
+        color: #ff7043;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        font-family: 'Manrope Variable', sans-serif;
+        font-size: 18px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 108px;
+        font-weight: 750;
+        line-height: 0.88;
+      }
+      h1 span {
+        color: #ff7043;
+      }
+      .bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 36px;
+      }
+      .addr {
+        color: #ff7043;
+        font-size: 22px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <p class="kicker">Bar · Carmagnola</p>
+      <h1>Less stress,<br /><span>more spritz!</span></h1>
+      <div class="bottom">
+        <strong>{site.name}</strong>
+        <span class="addr">{site.address.street}</span>
+      </div>
+    </div>
+  </body>
+</html>

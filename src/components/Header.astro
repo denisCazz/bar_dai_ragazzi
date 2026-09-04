@@ -1,0 +1,160 @@
+---
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${site.name} — home`}>
+      <img src="/logo-garavella.png" width="40" height="60" alt="" />
+      <span class="brand-name">{site.name}</span>
+    </a>
+
+    <nav class="nav-desk" aria-label="Principale">
+      {nav.map((item) => (
+        <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <a class="btn header-cta" href={site.whatsapp} rel="noopener noreferrer">WhatsApp</a>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-mobile" data-menu-toggle>
+      Menu
+    </button>
+  </div>
+
+  <div class="nav-mobile" id="nav-mobile" hidden>
+    <nav aria-label="Mobile">
+      {nav.map((item) => (
+        <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+      <a href={site.whatsapp} rel="noopener noreferrer">WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const panel = document.getElementById('nav-mobile');
+  if (toggle instanceof HTMLButtonElement && panel) {
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--espresso) 88%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    min-height: var(--header-h);
+    min-width: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    margin-right: auto;
+    min-width: 0;
+  }
+
+  .brand img {
+    width: 2.35rem;
+    height: 3.45rem;
+    object-fit: contain;
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-desk {
+    display: none;
+    gap: 1.75rem;
+  }
+
+  .nav-desk a {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream-muted);
+  }
+
+  .nav-desk a[aria-current='page'],
+  .nav-desk a:hover {
+    color: var(--gold);
+  }
+
+  .header-cta {
+    display: none;
+    min-height: 2.6rem;
+    padding-inline: 1.1rem;
+  }
+
+  .menu-btn {
+    flex-shrink: 0;
+    min-height: 2.6rem;
+    padding: 0 0.9rem;
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .nav-mobile {
+    border-top: 1px solid var(--line);
+    padding: 1rem 1.25rem 1.4rem;
+  }
+
+  .nav-mobile nav {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .nav-mobile a {
+    padding: 0.7rem 0;
+    text-decoration: none;
+    font-size: 1.35rem;
+    font-family: var(--font-display);
+  }
+
+  @media (min-width: 860px) {
+    .nav-desk,
+    .header-cta {
+      display: inline-flex;
+    }
+
+    .menu-btn,
+    .nav-mobile {
+      display: none;
+    }
+  }
+</style>
