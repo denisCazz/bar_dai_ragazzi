@@ -29,7 +29,10 @@ import { site } from '../data/site';
 
   <div class="wrap legal">
     <p>© {new Date().getFullYear()} {site.legalName}. Carmagnola.</p>
-    <p>Colazioni, pranzi, aperitivi e cocktail.</p>
+    <p>
+      Sito creato da{' '}
+      <a href={site.creator.url} rel="noopener noreferrer" target="_blank">{site.creator.name}</a>
+    </p>
   </div>
 </footer>
 
@@ -87,6 +90,11 @@ import { site } from '../data/site';
     border-top: 1px solid var(--line);
     color: var(--cream-muted);
     font-size: 0.82rem;
+  }
+
+  .legal a {
+    color: var(--gold);
+    text-decoration: none;
   }
 
   @media (min-width: 800px) {

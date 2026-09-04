@@ -90,7 +90,7 @@ export function faqJsonLd() {
         name: 'Quanto costa l’aperitivo con tagliere?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `Tutti i giorni, ${tagliere.time}, a ${tagliere.price} euro, con formaggi, salumi, finger food e sfiziosità fritte. Prima consumazione inclusa.`,
+          text: `${tagliere.when}, ${tagliere.time}, a ${tagliere.price} euro. ${tagliere.note}.`,
         },
       },
       {

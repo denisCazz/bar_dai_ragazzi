@@ -30,13 +30,13 @@ export const fallbackMenu: PublicMenuSection[] = [
     items: [
       {
         name: 'Aperitivo a buffet',
-        description: 'Venerdì, 17:00 – 20:30. Compresa la prima consumazione.',
+        description: 'Venerdì, 17:30 – 20:30. Compresa la prima consumazione.',
         price: '13',
       },
       {
         name: 'Aperitivo con tagliere',
         description:
-          'Tutti i giorni, 17:30 – 20:45. Formaggi, salumi, finger food e sfiziosità fritte. Compresa la prima consumazione.',
+          'Dal giovedì alla domenica, escluso il venerdì, 17:30 – 20:30. Finger food, sfiziosità fritte, pizza. Può variare in base alle disponibilità. Compresa la prima consumazione.',
         price: '8.50',
       },
     ],

@@ -5,7 +5,7 @@ export const site = {
   shortDescription:
     'Colazioni, pranzi e aperitivi in Piazza Garavella a Carmagnola.',
   description:
-    'Bar Dai Ragazzi a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, tutti i giorni taglieri e spritz. Piazza Garavella, 7.',
+    'Bar Dai Ragazzi a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
   url: 'https://www.bardairagazzicarmagnola.it',
   lang: 'it',
   locale: 'it_IT',
@@ -38,6 +38,10 @@ export const site = {
     instagram: 'https://www.instagram.com/bardairagazzi/',
     facebook: 'https://www.facebook.com/bardairagazzi',
     tiktok: 'https://www.tiktok.com/@bar.dai.ragazzi',
+  },
+  creator: {
+    name: 'bitora.it',
+    url: 'https://bitora.it',
   },
   hours: {
     display: 'Tutti i giorni, 9:00 – 21:00',
@@ -81,7 +85,7 @@ export const aperitivi = [
     id: 'buffet',
     title: 'Aperitivo a buffet',
     when: 'Tutti i venerdì',
-    time: '17:00 – 20:30',
+    time: '17:30 – 20:30',
     price: '13',
     note: 'Compresa la prima consumazione',
     highlight: true,
@@ -89,10 +93,10 @@ export const aperitivi = [
   {
     id: 'tagliere',
     title: 'Aperitivo con tagliere',
-    when: 'Tutti i giorni',
-    time: '17:30 – 20:45',
+    when: 'Dal giovedì alla domenica, escluso il venerdì',
+    time: '17:30 – 20:30',
     price: '8.50',
-    note: 'Formaggi, salumi, finger food e sfiziosità fritte. Compresa la prima consumazione',
+    note: 'Finger food, sfiziosità fritte, pizza. Può variare in base alle disponibilità. Compresa la prima consumazione',
     highlight: false,
   },
 ] as const;
