@@ -7,6 +7,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+ARG PUBLIC_GESTIONALE_URL=https://gestionaledairagazzi.bitora.it
+ENV PUBLIC_GESTIONALE_URL=$PUBLIC_GESTIONALE_URL
 RUN npm run build
 
 FROM nginx:1.27-alpine

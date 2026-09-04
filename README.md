@@ -13,6 +13,12 @@ npm run dev
 
 Il `Dockerfile` costruisce il sito statico con Node 22 Alpine e lo serve con Nginx sulla porta **80**.
 
-In Coolify: nuova risorsa → Dockerfile → porta `80` → dominio `www.bardairagazzicarmagnola.it`.
+Domini attuali: sito `dairagazzi.bitora.it`, gestionale `gestionaledairagazzi.bitora.it`.
 
-Il menu si aggiorna in `src/data/menu.ts`.
+In Coolify, variabile di build:
+
+```
+PUBLIC_GESTIONALE_URL=https://gestionaledairagazzi.bitora.it
+```
+
+Deve essere **https**, altrimenti il browser blocca il menu (mixed content). Nginx fa da proxy su `/api/public/menu`, così la pagina si aggiorna dal gestionale senza ricompilare il sito.

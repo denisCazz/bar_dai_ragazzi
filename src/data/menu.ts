@@ -21,6 +21,10 @@ export type PublicMenu = {
 export const comingSoonCopy =
   'Il dettaglio dei piatti lo trovi al banco. Presto anche qui.';
 
+export const PUBLIC_MENU_PATH = '/api/public/menu';
+
+const PRODUCTION_GESTIONALE_URL = 'https://gestionaledairagazzi.bitora.it';
+
 /** Usato solo se il gestionale non risponde. */
 export const fallbackMenu: PublicMenuSection[] = [
   {
@@ -50,7 +54,15 @@ export const fallbackMenu: PublicMenuSection[] = [
 ];
 
 export function gestionaleUrl() {
-  return (import.meta.env.PUBLIC_GESTIONALE_URL ?? '').replace(/\/$/, '');
+  const raw = (import.meta.env.PUBLIC_GESTIONALE_URL || PRODUCTION_GESTIONALE_URL).replace(
+    /\/$/,
+    '',
+  );
+  const local = /localhost|127\.0\.0\.1/.test(raw);
+  if (raw.startsWith('http://') && !local) {
+    return `https://${raw.slice('http://'.length)}`;
+  }
+  return raw;
 }
 
 export async function fetchPublicMenu(): Promise<PublicMenu> {
@@ -60,7 +72,7 @@ export async function fetchPublicMenu(): Promise<PublicMenu> {
   }
 
   try {
-    const res = await fetch(`${base}/api/public/menu`, {
+    const res = await fetch(`${base}${PUBLIC_MENU_PATH}`, {
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) {

@@ -95,17 +95,29 @@ const jsonLd = [
   type Menu = { comingSoonCopy: string; categorie: Section[] };
 
   const root = document.getElementById('menu-root');
-  const api = root?.dataset.api;
-  if (root && api) {
-    fetch(`${api}/api/public/menu`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: Menu | null) => {
-        if (!data?.categorie) return;
-        render(root, data);
-      })
-      .catch(() => {
-        /* resta il menu già renderizzato lato server */
-      });
+  if (root) {
+    const urls = ['/api/public/menu'];
+    const api = root.dataset.api;
+    if (api) urls.push(`${api}/api/public/menu`);
+    loadMenu(root, urls);
+  }
+
+  async function loadMenu(el: HTMLElement, urls: string[]) {
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (!res.ok) continue;
+        const data = (await res.json()) as Menu;
+        if (!Array.isArray(data?.categorie)) continue;
+        render(el, data);
+        return;
+      } catch {
+        /* prova l'URL successivo */
+      }
+    }
   }
 
   function render(el: HTMLElement, data: Menu) {
