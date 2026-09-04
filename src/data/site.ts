@@ -1,11 +1,11 @@
 export const site = {
-  name: 'Dai Ragazzi',
-  legalName: 'Bar Dai Ragazzi',
+  name: 'Garavella 7',
+  legalName: 'Bar Garavella 7',
   tagline: 'Less stress, more spritz!',
   shortDescription:
     'Colazioni, pranzi e aperitivi in Piazza Garavella a Carmagnola.',
   description:
-    'Bar Dai Ragazzi a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
+    'Bar Garavella 7 a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
   url: 'https://garavella7.bitora.it',
   lang: 'it',
   locale: 'it_IT',
@@ -72,7 +72,7 @@ export const site = {
   },
   keywords: [
     'bar Carmagnola',
-    'Dai Ragazzi',
+    'Garavella 7',
     'aperitivo Carmagnola',
     'colazione Carmagnola',
     'hamburger Carmagnola',

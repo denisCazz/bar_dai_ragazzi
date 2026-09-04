@@ -1,6 +1,6 @@
-# Dai Ragazzi
+# Garavella 7
 
-Sito vetrina del bar Dai Ragazzi, Piazza Garavella 7, Carmagnola.
+Sito vetrina del bar Garavella 7, Piazza Garavella 7, Carmagnola.
 
 ## Sviluppo
 

@@ -31,7 +31,7 @@ export function barJsonLd() {
     '@type': ['BarOrPub', 'Restaurant', 'CafeOrCoffeeShop'],
     '@id': `${site.url}/#locale`,
     name: site.name,
-    alternateName: ['Bar Dai Ragazzi', 'Dai Ragazzi Carmagnola', 'Bar dai ragazzi'],
+    alternateName: ['Bar Garavella 7', 'Garavella 7 Carmagnola', 'Garavella7'],
     description: site.description,
     url: site.url,
     image: [`${site.url}/og.png`, `${site.url}/favicon.png`],
@@ -79,7 +79,7 @@ export function faqJsonLd() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Quando c’è l’aperitivo a buffet Dai Ragazzi?',
+        name: 'Quando c’è l’aperitivo a buffet da Garavella 7?',
         acceptedAnswer: {
           '@type': 'Answer',
           text: `Tutti i venerdì, ${buffet.time}, a ${buffet.price} euro. Prima consumazione inclusa.`,
@@ -95,7 +95,7 @@ export function faqJsonLd() {
       },
       {
         '@type': 'Question',
-        name: 'Dove si trova il bar Dai Ragazzi a Carmagnola?',
+        name: 'Dove si trova il bar Garavella 7 a Carmagnola?',
         acceptedAnswer: {
           '@type': 'Answer',
           text: `${site.address.display}. Telefono ${site.telephoneDisplay}, cellulare ${site.mobileDisplay}.`,

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Dai Ragazzi">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Garavella 7">
   <rect width="64" height="64" rx="14" fill="#10241e"/>
   <rect x="4" y="4" width="56" height="56" rx="11" fill="none" stroke="#ff7043" stroke-width="3"/>
   <text
@@ -10,5 +10,5 @@
     font-weight="600"
     fill="#ff7043"
     letter-spacing="1"
-  >DR</text>
+  >G7</text>
 </svg>
