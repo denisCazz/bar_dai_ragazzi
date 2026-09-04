@@ -69,7 +69,14 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     });
 
     panel.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => setOpen(false));
+      link.addEventListener('click', () => {
+        const next = new URL(link.href, location.href);
+        const here = location.pathname.replace(/\/$/, '') || '/';
+        const dest = next.pathname.replace(/\/$/, '') || '/';
+        if (next.origin === location.origin && dest === here) {
+          setOpen(false);
+        }
+      });
     });
 
     document.addEventListener('keydown', (event) => {
@@ -241,6 +248,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   .nav-mobile nav {
     display: grid;
+    justify-items: center;
     gap: 0.2rem;
     text-align: center;
     width: min(22rem, 100%);
