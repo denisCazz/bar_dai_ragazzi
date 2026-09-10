@@ -89,6 +89,12 @@ const breadcrumbLd =
     <link rel="alternate" hreflang="x-default" href={canonical} />
     {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
+    <script
+      is:inline
+      defer
+      src="https://umami.bitora.it/script.js"
+      data-website-id="82d357bd-bcd8-4112-b7bd-530affc332c4"
+    ></script>
   </head>
   <body>
     <a class="skip-link" href="#contenuti">Vai ai contenuti</a>
