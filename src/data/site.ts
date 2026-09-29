@@ -120,6 +120,7 @@ export const moments = [
 
 export const nav = [
   { href: '/', label: 'Home' },
+  { href: '/#gallery', label: 'Gallery' },
   { href: '/menu', label: 'Menu' },
   { href: '/contatti', label: 'Contatti' },
 ] as const;
