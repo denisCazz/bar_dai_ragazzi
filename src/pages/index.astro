@@ -1,9 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Shell from '../components/Shell.astro';
-import { gallery } from '../data/gallery';
+import { fetchPublicGallery, gallery } from '../data/gallery';
+import { gestionaleUrl } from '../data/menu';
 import { aperitivi, site } from '../data/site';
 import { barJsonLd, faqJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
+
+const remoteGallery = await fetchPublicGallery();
+const photos = remoteGallery ?? gallery;
+const galleryApi = gestionaleUrl();
 
 const description = site.description;
 const jsonLd = [
@@ -108,8 +113,8 @@ const jsonLd = [
       <div class="wrap">
         <p class="kicker">Il locale</p>
         <h2>Gallery</h2>
-        <div class="mosaic">
-          {gallery.map((photo, index) => (
+        <div class="mosaic" data-api={galleryApi}>
+          {photos.map((photo, index) => (
             <button
               class:list={['shot', photo.layout]}
               type="button"
@@ -609,28 +614,89 @@ const jsonLd = [
 </style>
 
 <script>
-  const shots = [...document.querySelectorAll<HTMLButtonElement>('[data-gallery-shot]')];
+  type Shot = { src: string; width: number; height: number; alt: string };
+
+  const mosaic = document.querySelector<HTMLElement>('.mosaic');
   const dialog = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
   const frame = document.querySelector<HTMLImageElement>('[data-gallery-frame]');
   const caption = document.querySelector('[data-gallery-caption]');
   const count = document.querySelector('[data-gallery-count]');
   let index = 0;
 
+  function shots() {
+    return mosaic ? [...mosaic.querySelectorAll<HTMLButtonElement>('[data-gallery-shot]')] : [];
+  }
+
   function show(next: number) {
-    if (!dialog || !frame || shots.length === 0) return;
-    index = (next + shots.length) % shots.length;
-    const img = shots[index]?.querySelector('img');
+    const current = shots();
+    if (!dialog || !frame || current.length === 0) return;
+    index = (next + current.length) % current.length;
+    const img = current[index]?.querySelector('img');
     if (!img) return;
     frame.src = img.currentSrc || img.src;
     frame.alt = img.alt;
     if (caption) caption.textContent = img.alt;
-    if (count) count.textContent = `${index + 1} / ${shots.length}`;
+    if (count) count.textContent = `${index + 1} / ${current.length}`;
     if (!dialog.open) dialog.showModal();
   }
 
-  shots.forEach((shot, shotIndex) => {
-    shot.addEventListener('click', () => show(shotIndex));
+  function layoutFor(i: number, total: number, width: number, height: number) {
+    if (i === total - 1 && width >= height) return 'banner';
+    return width >= height ? 'wide' : 'tall';
+  }
+
+  function render(photos: Shot[]) {
+    if (!mosaic || photos.length === 0) return;
+    mosaic.replaceChildren();
+    photos.forEach((photo, i) => {
+      const button = document.createElement('button');
+      button.className = `shot ${layoutFor(i, photos.length, photo.width, photo.height)}`;
+      button.type = 'button';
+      button.dataset.galleryShot = '';
+      button.dataset.index = String(i);
+      button.setAttribute('aria-label', `Apri foto: ${photo.alt}`);
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.width = photo.width;
+      img.height = photo.height;
+      img.alt = photo.alt;
+      img.loading = 'lazy';
+      button.append(img);
+      mosaic.append(button);
+    });
+  }
+
+  mosaic?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const shot = target.closest<HTMLButtonElement>('[data-gallery-shot]');
+    if (!shot) return;
+    const current = shots();
+    const shotIndex = current.indexOf(shot);
+    if (shotIndex >= 0) show(shotIndex);
   });
+
+  if (mosaic) {
+    const urls = ['/api/public/gallery'];
+    const api = mosaic.dataset.api;
+    if (api) urls.push(`${api}/api/public/gallery`);
+    void loadGallery(urls);
+  }
+
+  async function loadGallery(urls: string[]) {
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        if (!res.ok) continue;
+        const data = (await res.json()) as { foto?: Shot[] };
+        if (!Array.isArray(data.foto) || data.foto.length === 0) continue;
+        render(data.foto);
+        return;
+      } catch {
+        /* prova l'URL successivo */
+      }
+    }
+  }
 
   dialog?.addEventListener('click', (event) => {
     const target = event.target;

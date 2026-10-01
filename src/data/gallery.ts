@@ -1,3 +1,44 @@
+import { gestionaleUrl } from './menu';
+
+export type GalleryPhoto = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  layout: 'wide' | 'tall' | 'banner';
+};
+
+export function mosaicLayout(
+  index: number,
+  total: number,
+  width: number,
+  height: number,
+): GalleryPhoto['layout'] {
+  if (index === total - 1 && width >= height) return 'banner';
+  return width >= height ? 'wide' : 'tall';
+}
+
+export async function fetchPublicGallery(): Promise<GalleryPhoto[] | null> {
+  const base = gestionaleUrl();
+  if (!base) return null;
+  try {
+    const res = await fetch(`${base}/api/public/gallery`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      foto?: { src: string; width: number; height: number; alt: string }[];
+    };
+    if (!Array.isArray(data.foto) || data.foto.length === 0) return null;
+    return data.foto.map((photo, index) => ({
+      ...photo,
+      layout: mosaicLayout(index, data.foto!.length, photo.width, photo.height),
+    }));
+  } catch {
+    return null;
+  }
+}
+
 export const gallery = [
   {
     src: '/gallery/sala-menta.jpg',
