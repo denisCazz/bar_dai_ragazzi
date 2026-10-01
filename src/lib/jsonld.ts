@@ -119,6 +119,7 @@ export function menuJsonLd(menu: PublicMenuSection[]) {
         '@type': 'MenuItem',
         name: item.name,
         description: item.description,
+        ...(item.image ? { image: new URL(item.image, site.url).href } : {}),
         ...(item.price
           ? {
               offers: {

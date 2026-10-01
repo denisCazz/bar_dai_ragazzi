@@ -62,13 +62,20 @@ const jsonLd = [
               {section.items.length > 0 ? (
                 <ul>
                   {section.items.map((item) => (
-                    <li>
-                      <div class="dish">
-                        <h3>{item.name}</h3>
-                        <span class="dots" aria-hidden="true"></span>
-                        {item.price && <p class="price">{item.price}€</p>}
+                    <li class={item.image ? 'has-photo' : undefined}>
+                      {item.image && (
+                        <a class="photo-link" href={item.image} target="_blank" rel="noopener noreferrer">
+                          <img class="photo" src={item.image} alt={item.name} width="88" height="88" loading="lazy" />
+                        </a>
+                      )}
+                      <div>
+                        <div class="dish">
+                          <h3>{item.name}</h3>
+                          <span class="dots" aria-hidden="true"></span>
+                          {item.price && <p class="price">{item.price}€</p>}
+                        </div>
+                        {item.description && <p class="desc">{item.description}</p>}
                       </div>
-                      {item.description && <p class="desc">{item.description}</p>}
                     </li>
                   ))}
                 </ul>
@@ -90,7 +97,7 @@ const jsonLd = [
 </Layout>
 
 <script>
-  type Item = { name: string; description?: string; price?: string };
+  type Item = { name: string; description?: string; price?: string; image?: string };
   type Section = { id: string; title: string; subtitle?: string; items: Item[] };
   type Menu = { comingSoonCopy: string; categorie: Section[] };
 
@@ -100,6 +107,16 @@ const jsonLd = [
     const api = root.dataset.api;
     if (api) urls.push(`${api}/api/public/menu`);
     loadMenu(root, urls);
+  }
+
+  function isMenuImage(url: string) {
+    if (url.startsWith('/api/public/menu/immagini/')) return true;
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    } catch {
+      return false;
+    }
   }
 
   async function loadMenu(el: HTMLElement, urls: string[]) {
@@ -164,6 +181,24 @@ const jsonLd = [
         const ul = document.createElement('ul');
         for (const item of section.items) {
           const li = document.createElement('li');
+          const copy = document.createElement('div');
+          if (item.image && isMenuImage(item.image)) {
+            li.className = 'has-photo';
+            const link = document.createElement('a');
+            link.className = 'photo-link';
+            link.href = item.image;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            const img = document.createElement('img');
+            img.className = 'photo';
+            img.src = item.image;
+            img.alt = item.name;
+            img.width = 88;
+            img.height = 88;
+            img.loading = 'lazy';
+            link.append(img);
+            li.append(link);
+          }
           const dish = document.createElement('div');
           dish.className = 'dish';
           const h3 = document.createElement('h3');
@@ -178,13 +213,14 @@ const jsonLd = [
             price.textContent = `${item.price}€`;
             dish.append(price);
           }
-          li.append(dish);
+          copy.append(dish);
           if (item.description) {
             const desc = document.createElement('p');
             desc.className = 'desc';
             desc.textContent = item.description;
-            li.append(desc);
+            copy.append(desc);
           }
+          li.append(copy);
           ul.append(li);
         }
         block.append(ul);
@@ -309,6 +345,22 @@ const jsonLd = [
     margin: 0;
     display: grid;
     gap: 1rem;
+  }
+
+  :global(#menu-root li.has-photo) {
+    display: grid;
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+  }
+
+  :global(#menu-root .photo) {
+    display: block;
+    width: 4.75rem;
+    height: 4.75rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
   }
 
   :global(#menu-root .dish) {
