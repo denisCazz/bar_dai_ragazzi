@@ -1,3 +1,5 @@
+import { t, type Locale } from '../i18n';
+
 export type PublicMenuItem = {
   name: string;
   description?: string;
@@ -19,40 +21,41 @@ export type PublicMenu = {
   categorie: PublicMenuSection[];
 };
 
-export const comingSoonCopy =
-  'Il dettaglio dei piatti lo trovi al banco. Presto anche qui.';
-
 export const PUBLIC_MENU_PATH = '/api/public/menu';
 
 const PRODUCTION_GESTIONALE_URL = 'https://gestionalegaravella7.bitora.it';
 
 /** Usato solo se il gestionale non risponde. */
-export const fallbackMenu: PublicMenuSection[] = [
-  {
-    id: 'aperitivi',
-    title: 'Aperitivi',
-    subtitle: 'Less stress, more spritz.',
-    items: [
-      {
-        name: 'Aperitivo a buffet',
-        description: 'Venerdì, 17:30 – 20:30. Compresa la prima consumazione.',
-        price: '13',
-      },
-      {
-        name: 'Aperitivo con tagliere',
-        description:
-          'Dal giovedì alla domenica, escluso il venerdì, 17:30 – 20:30. Finger food, sfiziosità fritte, pizza. Può variare in base alle disponibilità. Compresa la prima consumazione.',
-        price: '8.50',
-      },
-    ],
-  },
-  {
-    id: 'colazione',
-    title: 'Colazione',
-    subtitle: 'Dolce, salato, farcito al momento.',
-    items: [],
-  },
-];
+export function fallbackMenuFor(locale: Locale): PublicMenuSection[] {
+  const copy = t(locale);
+  return [
+    {
+      id: 'aperitivi',
+      title: copy.fallback.aperitiviTitle,
+      subtitle: copy.fallback.aperitiviSubtitle,
+      items: [
+        {
+          name: copy.aperitivi[0].title,
+          description: copy.fallback.buffetDescription,
+          price: '13',
+        },
+        {
+          name: copy.aperitivi[1].title,
+          description: copy.fallback.tagliereDescription,
+          price: '8.50',
+        },
+      ],
+    },
+    {
+      id: 'colazione',
+      title: copy.fallback.breakfastTitle,
+      subtitle: copy.fallback.breakfastSubtitle,
+      items: [],
+    },
+  ];
+}
+
+export const fallbackMenu = fallbackMenuFor('it');
 
 export function gestionaleUrl() {
   const raw = (import.meta.env.PUBLIC_GESTIONALE_URL || PRODUCTION_GESTIONALE_URL).replace(
@@ -66,29 +69,28 @@ export function gestionaleUrl() {
   return raw;
 }
 
-export async function fetchPublicMenu(): Promise<PublicMenu> {
+export async function fetchPublicMenu(locale: Locale = 'it'): Promise<PublicMenu> {
+  const fallback = {
+    comingSoonCopy: t(locale).menu.comingSoon,
+    categorie: fallbackMenuFor(locale),
+  };
   const base = gestionaleUrl();
-  if (!base) {
-    return { comingSoonCopy, categorie: fallbackMenu };
-  }
+  if (!base) return fallback;
 
   try {
     const res = await fetch(`${base}${PUBLIC_MENU_PATH}`, {
       headers: { Accept: 'application/json' },
     });
-    if (!res.ok) {
-      return { comingSoonCopy, categorie: fallbackMenu };
-    }
+    if (!res.ok) return fallback;
     const data = (await res.json()) as PublicMenu;
-    if (!Array.isArray(data.categorie)) {
-      return { comingSoonCopy, categorie: fallbackMenu };
-    }
+    if (!Array.isArray(data.categorie)) return fallback;
     return {
       updatedAt: data.updatedAt,
-      comingSoonCopy: data.comingSoonCopy || comingSoonCopy,
+      comingSoonCopy:
+        locale === 'en' ? fallback.comingSoonCopy : data.comingSoonCopy || fallback.comingSoonCopy,
       categorie: data.categorie,
     };
   } catch {
-    return { comingSoonCopy, categorie: fallbackMenu };
+    return fallback;
   }
 }

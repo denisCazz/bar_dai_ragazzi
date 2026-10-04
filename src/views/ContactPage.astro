@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Shell from '../components/Shell.astro';
+import { site } from '../data/site';
+import { localeFromPath, localizedPath, mapsEmbed, t } from '../i18n';
+import { barJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
+
+const lang = localeFromPath(Astro.url.pathname);
+const copy = t(lang);
+const title = copy.contact.title;
+const description = copy.contact.description(
+  site.address.display,
+  site.telephoneDisplay,
+  site.mobileDisplay,
+);
+const path = localizedPath('/contatti', lang);
+const home = localizedPath('/', lang);
+const jsonLd = [
+  barJsonLd(lang),
+  websiteJsonLd(lang),
+  webpageJsonLd({ path, title, description, locale: lang }),
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  path={path}
+  jsonLd={jsonLd}
+  breadcrumbs={[
+    { name: 'Home', path: home },
+    { name: copy.contact.crumb, path },
+  ]}
+>
+  <Shell>
+    <section class="wrap page">
+      <p class="kicker">{copy.contact.kicker}</p>
+      <h1>{copy.contact.heading}</h1>
+      <p class="lead muted">{copy.contact.lead}</p>
+
+      <dl>
+        <div>
+          <dt>{copy.contact.address}</dt>
+          <dd>
+            <a href={site.maps.google} rel="noopener noreferrer">{site.address.display}</a>
+          </dd>
+        </div>
+        <div>
+          <dt>{copy.contact.phone}</dt>
+          <dd><a href={`tel:${site.telephone}`}>{site.telephoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>{copy.contact.mobile}</dt>
+          <dd><a href={`tel:${site.mobile}`}>{site.mobileDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>{copy.contact.whatsapp}</dt>
+          <dd><a href={site.whatsapp} rel="noopener noreferrer">{copy.contact.write}</a></dd>
+        </div>
+        <div>
+          <dt>{copy.contact.hours}</dt>
+          <dd>
+            {copy.hours}
+            <span class="note">{copy.hoursNote}</span>
+          </dd>
+        </div>
+      </dl>
+
+      <iframe
+        title={copy.contact.mapTitle(site.name)}
+        src={mapsEmbed(lang)}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+
+      <div class="social">
+        <a href={site.social.instagram} rel="noopener noreferrer" target="_blank">Instagram</a>
+        <a href={site.social.facebook} rel="noopener noreferrer" target="_blank">Facebook</a>
+        <a href={site.social.tiktok} rel="noopener noreferrer" target="_blank">TikTok</a>
+      </div>
+    </section>
+  </Shell>
+</Layout>
+
+<style>
+  .page {
+    padding: 4.5rem 0 6rem;
+  }
+
+  h1 {
+    font-size: clamp(3.2rem, 10vw, 6.5rem);
+    max-width: 10ch;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .lead {
+    max-width: 34rem;
+    margin-bottom: 2.5rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 1.4rem;
+    margin: 0 0 2.5rem;
+  }
+
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .note {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--cream-muted);
+    font-size: 0.9rem;
+  }
+
+  iframe {
+    width: 100%;
+    height: 360px;
+    border: 1px solid var(--line);
+    filter: grayscale(0.35) contrast(0.95) sepia(0.25);
+  }
+
+  .social {
+    display: flex;
+    gap: 1.4rem;
+    margin-top: 1.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .social a {
+    text-decoration: none;
+    color: var(--gold);
+  }
+
+  @media (min-width: 800px) {
+    dl {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

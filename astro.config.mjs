@@ -9,16 +9,30 @@ const gestionale =
 export default defineConfig({
   site,
   trailingSlash: 'never',
+  i18n: {
+    defaultLocale: 'it',
+    locales: ['it', 'en'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     sitemap({
+      i18n: {
+        defaultLocale: 'it',
+        locales: {
+          it: 'it-IT',
+          en: 'en',
+        },
+      },
       filter: (page) =>
         !page.includes('/404') && !page.endsWith('/og') && !page.includes('/og/'),
-      namespaces: { news: false, xhtml: false, image: false, video: false },
+      namespaces: { news: false, xhtml: true, image: false, video: false },
       serialize(item) {
-        const url = item.url.replace(/\/$/, '');
-        if (url === site) {
+        const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
+        if (path === '/' || path === '/en') {
           item.priority = 1;
-        } else if (url.endsWith('/menu')) {
+        } else if (path === '/menu' || path === '/en/menu') {
           item.priority = 0.9;
         } else {
           item.priority = 0.8;

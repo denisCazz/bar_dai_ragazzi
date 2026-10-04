@@ -1,20 +1,40 @@
 ---
-import { nav, site } from '../data/site';
+import { site } from '../data/site';
+import { localeFromPath, localizedPath, locales, t } from '../i18n';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const lang = localeFromPath(path);
+const copy = t(lang);
+const links = copy.nav.map((item) => ({
+  ...item,
+  href: localizedPath(item.href, lang),
+}));
 ---
 
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href="/" aria-label={`${site.name} — home`}>
+    <a class="brand" href={localizedPath('/', lang)} aria-label={`${site.name} — ${copy.brandHome}`}>
       <img src="/logo-garavella.png" width="40" height="60" alt="" />
       <span class="brand-name">{site.name}</span>
     </a>
 
-    <nav class="nav-desk" aria-label="Principale">
-      {nav.map((item) => (
+    <nav class="nav-desk" aria-label={copy.navLabel}>
+      {links.map((item) => (
         <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
           {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <nav class="lang-switch" aria-label={copy.language}>
+      {locales.map((locale) => (
+        <a
+          href={localizedPath(path, locale)}
+          hreflang={locale}
+          lang={locale}
+          aria-current={locale === lang ? 'true' : undefined}
+        >
+          {locale.toUpperCase()}
         </a>
       ))}
     </nav>
@@ -24,10 +44,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <button
       class="menu-btn"
       type="button"
-      aria-label="Apri menu"
+      aria-label={copy.openMenu}
       aria-expanded="false"
       aria-controls="nav-mobile"
       data-menu-toggle
+      data-label-open={copy.openMenu}
+      data-label-close={copy.closeMenu}
     >
       <span class="menu-icon" aria-hidden="true">
         <span></span>
@@ -38,8 +60,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   </div>
 
   <div class="nav-mobile" id="nav-mobile" hidden>
-    <nav aria-label="Mobile">
-      {nav.map((item) => (
+    <nav aria-label={copy.navMobileLabel}>
+      {links.map((item) => (
         <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
           {item.label}
         </a>
@@ -57,7 +79,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   function setOpen(open: boolean) {
     if (!(toggle instanceof HTMLButtonElement) || !panel) return;
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Chiudi menu' : 'Apri menu');
+    const openLabel = toggle.dataset.labelOpen ?? 'Apri menu';
+    const closeLabel = toggle.dataset.labelClose ?? 'Chiudi menu';
+    toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
     panel.hidden = !open;
     document.body.classList.toggle('nav-open', open);
     header?.classList.toggle('is-open', open);
@@ -159,6 +183,26 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   .nav-desk a[aria-current='page'],
   .nav-desk a:hover {
+    color: var(--gold);
+  }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-shrink: 0;
+  }
+
+  .lang-switch a {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    color: var(--cream-muted);
+  }
+
+  .lang-switch a[aria-current='true'],
+  .lang-switch a:hover {
     color: var(--gold);
   }
 

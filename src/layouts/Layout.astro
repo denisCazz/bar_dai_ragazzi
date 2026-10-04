@@ -3,6 +3,7 @@ import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/manrope';
 import '../styles/global.css';
 import { site } from '../data/site';
+import { localeFromPath, localizedPath, locales, stripLocale, t } from '../i18n';
 
 type Crumb = { name: string; path: string };
 
@@ -24,9 +25,16 @@ const {
   noindex = false,
 } = Astro.props;
 
-const canonical = new URL(path, Astro.site ?? site.url).href;
+const lang = localeFromPath(Astro.url.pathname);
+const copy = t(lang);
+const barePath = stripLocale(path);
+const canonical = new URL(localizedPath(barePath, lang), Astro.site ?? site.url).href;
 const ogImage = new URL('/og.png', Astro.site ?? site.url).href;
-const pageTitle = path === '/' ? `${site.name} · ${site.tagline}` : `${title} · ${site.name}`;
+const pageTitle = barePath === '/' ? `${site.name} · ${site.tagline}` : `${title} · ${site.name}`;
+const alternates = locales.map((locale) => ({
+  locale,
+  href: new URL(localizedPath(barePath, locale), Astro.site ?? site.url).href,
+}));
 
 const breadcrumbLd =
   breadcrumbs.length > 0
@@ -37,20 +45,20 @@ const breadcrumbLd =
           '@type': 'ListItem',
           position: index + 1,
           name: crumb.name,
-          item: new URL(crumb.path, Astro.site ?? site.url).href,
+          item: new URL(localizedPath(stripLocale(crumb.path), lang), Astro.site ?? site.url).href,
         })),
       }
     : null;
 ---
 
 <!doctype html>
-<html lang={site.lang}>
+<html lang={copy.htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={site.keywords.join(', ')} />
+    <meta name="keywords" content={copy.keywords.join(', ')} />
     <meta name="author" content={site.legalName} />
     <meta
       name="robots"
@@ -67,7 +75,10 @@ const breadcrumbLd =
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content={site.locale} />
+    <meta property="og:locale" content={copy.ogLocale} />
+    {alternates
+      .filter((alt) => alt.locale !== lang)
+      .map((alt) => <meta property="og:locale:alternate" content={t(alt.locale).ogLocale} />)}
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -85,8 +96,10 @@ const breadcrumbLd =
     <meta name="geo.placename" content={`${site.address.city}, ${site.address.regionName}`} />
     <meta name="geo.position" content={`${site.geo.lat};${site.geo.lng}`} />
     <meta name="ICBM" content={`${site.geo.lat}, ${site.geo.lng}`} />
-    <link rel="alternate" hreflang="it" href={canonical} />
-    <link rel="alternate" hreflang="x-default" href={canonical} />
+    {alternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.locale} href={alt.href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={alternates[0].href} />
     {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
     <script
@@ -97,7 +110,7 @@ const breadcrumbLd =
     ></script>
   </head>
   <body>
-    <a class="skip-link" href="#contenuti">Vai ai contenuti</a>
+    <a class="skip-link" href="#contenuti">{copy.skip}</a>
     <slot />
   </body>
 </html>

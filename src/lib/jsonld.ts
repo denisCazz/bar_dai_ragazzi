@@ -1,5 +1,6 @@
 import { aperitivi, site } from '../data/site';
 import type { PublicMenuSection } from '../data/menu';
+import { localizedPath, t, type Locale } from '../i18n';
 
 const sameAs = [site.social.instagram, site.social.facebook, site.social.tiktok];
 
@@ -25,21 +26,22 @@ const geo = {
   longitude: site.geo.lng,
 };
 
-export function barJsonLd() {
+export function barJsonLd(locale: Locale) {
+  const copy = t(locale);
   return {
     '@context': 'https://schema.org',
     '@type': ['BarOrPub', 'Restaurant', 'CafeOrCoffeeShop'],
     '@id': `${site.url}/#locale`,
     name: site.name,
     alternateName: ['Bar Garavella 7', 'Garavella 7 Carmagnola', 'Garavella7'],
-    description: site.description,
-    url: site.url,
+    description: copy.description,
+    url: new URL(localizedPath('/', locale), site.url).href,
     image: [`${site.url}/og.png`, `${site.url}/favicon.png`],
     logo: `${site.url}/favicon.png`,
     telephone: [site.telephone, site.mobile],
     priceRange: site.priceRange,
-    servesCuisine: ['Italiana', 'Bar', 'Hamburger', 'Cocktail'],
-    menu: `${site.url}/menu`,
+    servesCuisine: [...copy.cuisine],
+    menu: new URL(localizedPath('/menu', locale), site.url).href,
     acceptsReservations: 'True',
     address,
     geo,
@@ -56,22 +58,25 @@ export function barJsonLd() {
   };
 }
 
-export function websiteJsonLd() {
+export function websiteJsonLd(locale: Locale) {
+  const copy = t(locale);
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${site.url}/#website`,
     name: site.name,
     url: site.url,
-    inLanguage: 'it-IT',
-    description: site.description,
+    inLanguage: locale === 'en' ? 'en' : 'it-IT',
+    description: copy.description,
     publisher: { '@id': `${site.url}/#locale` },
   };
 }
 
-export function faqJsonLd() {
+export function faqJsonLd(locale: Locale) {
+  const copy = t(locale);
   const buffet = aperitivi[0];
   const tagliere = aperitivi[1];
+  const tagliereCopy = copy.aperitivi[1];
 
   return {
     '@context': 'https://schema.org',
@@ -79,38 +84,49 @@ export function faqJsonLd() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Quando c’è l’aperitivo a buffet da Garavella 7?',
+        name: copy.faq.buffetQuestion,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `Tutti i venerdì, ${buffet.time}, a ${buffet.price} euro. Prima consumazione inclusa.`,
+          text: copy.faq.buffetAnswer(buffet.time, buffet.price),
         },
       },
       {
         '@type': 'Question',
-        name: 'Quanto costa l’aperitivo con tagliere?',
+        name: copy.faq.boardQuestion,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `${tagliere.when}, ${tagliere.time}, a ${tagliere.price} euro. ${tagliere.note}.`,
+          text: copy.faq.boardAnswer(
+            tagliereCopy.when,
+            tagliere.time,
+            tagliere.price,
+            tagliereCopy.note,
+          ),
         },
       },
       {
         '@type': 'Question',
-        name: 'Dove si trova il bar Garavella 7 a Carmagnola?',
+        name: copy.faq.whereQuestion,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `${site.address.display}. Telefono ${site.telephoneDisplay}, cellulare ${site.mobileDisplay}.`,
+          text: copy.faq.whereAnswer(
+            site.address.display,
+            site.telephoneDisplay,
+            site.mobileDisplay,
+          ),
         },
       },
     ],
   };
 }
 
-export function menuJsonLd(menu: PublicMenuSection[]) {
+export function menuJsonLd(menu: PublicMenuSection[], locale: Locale) {
+  const menuUrl = new URL(localizedPath('/menu', locale), site.url).href;
   return {
     '@context': 'https://schema.org',
     '@type': 'Menu',
-    '@id': `${site.url}/menu#menu`,
+    '@id': `${menuUrl}#menu`,
     name: `Menu ${site.name}`,
+    inLanguage: locale === 'en' ? 'en' : 'it-IT',
     hasMenuSection: menu.map((section) => ({
       '@type': 'MenuSection',
       name: section.title,
@@ -134,7 +150,12 @@ export function menuJsonLd(menu: PublicMenuSection[]) {
   };
 }
 
-export function webpageJsonLd(opts: { path: string; title: string; description: string }) {
+export function webpageJsonLd(opts: {
+  path: string;
+  title: string;
+  description: string;
+  locale: Locale;
+}) {
   const url = new URL(opts.path, site.url).href;
   return {
     '@context': 'https://schema.org',
@@ -143,7 +164,7 @@ export function webpageJsonLd(opts: { path: string; title: string; description: 
     url,
     name: opts.title,
     description: opts.description,
-    inLanguage: 'it-IT',
+    inLanguage: opts.locale === 'en' ? 'en' : 'it-IT',
     isPartOf: { '@id': `${site.url}/#website` },
     about: { '@id': `${site.url}/#locale` },
   };

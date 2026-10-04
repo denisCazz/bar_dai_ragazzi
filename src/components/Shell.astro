@@ -2,6 +2,9 @@
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 import { site } from '../data/site';
+import { localeFromPath, t } from '../i18n';
+
+const copy = t(localeFromPath(Astro.url.pathname));
 ---
 
 <Header />
@@ -11,7 +14,7 @@ import { site } from '../data/site';
 <Footer />
 
 <div class="whatsapp-fab">
-  <a href={site.whatsapp} rel="noopener noreferrer" aria-label="Scrivici su WhatsApp">
+  <a href={site.whatsapp} rel="noopener noreferrer" aria-label={copy.whatsappLabel}>
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <path
         fill="currentColor"

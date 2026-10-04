@@ -1,3 +1,4 @@
+import { t, type Locale } from '../i18n';
 import { gestionaleUrl } from './menu';
 
 export type GalleryPhoto = {
@@ -37,6 +38,14 @@ export async function fetchPublicGallery(): Promise<GalleryPhoto[] | null> {
   } catch {
     return null;
   }
+}
+
+export function galleryFor(locale: Locale): GalleryPhoto[] {
+  const alts = t(locale).galleryAlts;
+  return gallery.map((photo, index) => ({
+    ...photo,
+    alt: alts[index] ?? photo.alt,
+  }));
 }
 
 export const gallery = [

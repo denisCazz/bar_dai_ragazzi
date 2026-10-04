@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Shell from '../components/Shell.astro';
+import { site } from '../data/site';
+import { localeFromPath, localizedPath, t } from '../i18n';
+
+export const prerender = true;
+
+const lang = localeFromPath(Astro.url.pathname);
+const copy = t(lang);
+---
+
+<Layout
+  title={copy.notFound.title}
+  description={copy.notFound.description(site.name)}
+  path={localizedPath('/', lang)}
+  noindex
+>
+  <Shell>
+    <section class="wrap page">
+      <p class="kicker">404</p>
+      <h1>{copy.notFound.heading}</h1>
+      <p class="muted">{copy.notFound.body}</p>
+      <div class="actions">
+        <a class="btn" href={localizedPath('/', lang)}>Home</a>
+        <a class="btn btn-ghost" href={localizedPath('/menu', lang)}>Menu</a>
+      </div>
+    </section>
+  </Shell>
+</Layout>
+
+<style>
+  .page {
+    padding: 6rem 0;
+    min-height: 60vh;
+  }
+
+  h1 {
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    max-width: 12ch;
+    margin: 0.6rem 0 1rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+</style>
