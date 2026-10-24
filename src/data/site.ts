@@ -46,7 +46,7 @@ export const site = {
     url: 'https://bitora.it',
   },
   hours: {
-    display: 'Tutti i giorni, 9:00 – 21:00',
+    display: 'Lun – Sab 06:30 – 21:00 · Dom 08:30 – 12:30, 17:00 – 21:00',
     note: 'Orari soggetti a variazioni. Meglio una telefonata prima di passare.',
     weekly: [
       {
@@ -57,10 +57,21 @@ export const site = {
           'Thursday',
           'Friday',
           'Saturday',
-          'Sunday',
         ] as const,
-        daysIt: 'Lun – Dom',
-        opens: '09:00',
+        daysIt: 'Lun – Sab',
+        opens: '06:30',
+        closes: '21:00',
+      },
+      {
+        days: ['Sunday'] as const,
+        daysIt: 'Dom (mattina)',
+        opens: '08:30',
+        closes: '12:30',
+      },
+      {
+        days: ['Sunday'] as const,
+        daysIt: 'Dom (pomeriggio/sera)',
+        opens: '17:00',
         closes: '21:00',
       },
     ],

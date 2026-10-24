@@ -60,7 +60,11 @@ const jsonLd = [
         <div>
           <dt>{copy.contact.hours}</dt>
           <dd>
-            {copy.hours}
+            {copy.hoursSchedule.map((row) => (
+              <div class="hours-row">
+                <strong>{row.day}:</strong> <span>{row.time}</span>
+              </div>
+            ))}
             <span class="note">{copy.hoursNote}</span>
           </dd>
         </div>
@@ -120,9 +124,23 @@ const jsonLd = [
 
   .note {
     display: block;
-    margin-top: 0.35rem;
+    margin-top: 0.45rem;
     color: var(--cream-muted);
     font-size: 0.9rem;
+  }
+
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.2rem;
+    max-width: 24rem;
+    padding: 0.18rem 0;
+    font-size: 1.05rem;
+  }
+
+  .hours-row strong {
+    font-weight: 600;
+    color: var(--cream);
   }
 
   iframe {
