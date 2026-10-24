@@ -3,9 +3,9 @@ export const site = {
   legalName: 'Bar Garavella 7',
   tagline: 'Less stress, more spritz!',
   shortDescription:
-    'Colazioni, pranzi e aperitivi in Piazza Garavella a Carmagnola.',
+    'Colazioni, pranzi, pizze e aperitivi in Piazza Garavella a Carmagnola.',
   description:
-    'Bar Garavella 7 a Carmagnola: colazioni, tavola calda, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
+    'Bar Garavella 7 a Carmagnola: colazioni, tavola calda, pizze, panini, hamburger e aperitivi. Tutti i venerdì aperitivo a buffet, dal giovedì alla domenica (escluso il venerdì) aperitivo con tagliere. Piazza Garavella, 7.',
   url: 'https://garavella7.bitora.it',
   lang: 'it',
   locale: 'it_IT',
@@ -15,7 +15,7 @@ export const site = {
   mobileDisplay: '380 260 5646',
   whatsapp: 'https://wa.me/390110860110',
   priceRange: '€',
-  foundingHint: 'Bar, tavola calda, hamburgeria e cocktail in centro a Carmagnola.',
+  foundingHint: 'Bar, tavola calda, pizzeria, hamburgeria e cocktail in centro a Carmagnola.',
   address: {
     street: 'Piazza Garavella, 7',
     city: 'Carmagnola',
@@ -109,12 +109,12 @@ export const moments = [
     text: 'Brioche farcite al momento, caffè e il via della giornata senza fretta.',
   },
   {
-    title: 'Pausa pranzo',
-    text: 'Tavola calda, panini, focacce calde e hamburger pronti in pochi minuti.',
+    title: 'Pranzo & Pizze',
+    text: 'Tavola calda, pizze sfornate al momento, panini, focacce calde e hamburger.',
   },
   {
-    title: 'Aperitivo',
-    text: 'Spritz, cocktail, taglieri e il buffet del venerdì. Less stress, more spritz.',
+    title: 'Promozioni & Aperitivo',
+    text: 'Spritz, cocktail, pizze, taglieri e il buffet del venerdì. Less stress, more spritz.',
   },
 ] as const;
 

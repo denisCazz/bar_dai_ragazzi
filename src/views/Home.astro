@@ -3,7 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Shell from '../components/Shell.astro';
 import { fetchPublicGallery, galleryFor } from '../data/gallery';
 import { gestionaleUrl } from '../data/menu';
-import { aperitivi, site } from '../data/site';
+import { fetchPublicPromozioni } from '../data/promozioni';
+import { site } from '../data/site';
 import { localeFromPath, localizedPath, mapsEmbed, t } from '../i18n';
 import { barJsonLd, faqJsonLd, webpageJsonLd, websiteJsonLd } from '../lib/jsonld';
 
@@ -12,10 +13,7 @@ const copy = t(lang);
 const remoteGallery = await fetchPublicGallery();
 const photos = remoteGallery ?? galleryFor(lang);
 const galleryApi = gestionaleUrl();
-const cards = aperitivi.map((item, index) => ({
-  ...item,
-  ...copy.aperitivi[index],
-}));
+const cards = await fetchPublicPromozioni(lang);
 
 const description = copy.description;
 const path = localizedPath('/', lang);
@@ -77,15 +75,20 @@ const jsonLd = [
       <div class="wrap">
         <p class="kicker">{copy.home.aperitivoKicker}</p>
         <h2>{copy.home.aperitivoTitle}</h2>
-        <div class="tickets">
+        <div
+          class="tickets"
+          data-promozioni-root
+          data-api={galleryApi}
+          data-lang={lang}
+        >
           {cards.map((item) => (
             <article class:list={['ticket', item.highlight && 'featured']}>
               <p class="when">{item.when}</p>
               <h3>{item.title}</h3>
-              <p class="time">{item.time}</p>
+              {item.time && <p class="time">{item.time}</p>}
               <p class="price">
                 <span>{item.price}€</span>
-                <small>{item.note}</small>
+                {item.note && <small>{item.note}</small>}
               </p>
             </article>
           ))}
@@ -324,6 +327,10 @@ const jsonLd = [
     max-width: 14ch;
   }
 
+  .aperitivo-band h2 {
+    max-width: 22ch;
+  }
+
   .gallery {
     padding-top: 0;
   }
@@ -476,24 +483,24 @@ const jsonLd = [
     border-block: 1px solid var(--line);
   }
 
-  .tickets {
+  :global(.tickets) {
     display: grid;
     gap: 1.2rem;
     margin-top: 2.2rem;
   }
 
-  .ticket {
+  :global(.ticket) {
     border: 1px solid var(--line);
     padding: 1.7rem 1.5rem 1.5rem;
     background: color-mix(in srgb, var(--espresso) 55%, transparent);
   }
 
-  .ticket.featured {
+  :global(.ticket.featured) {
     border-color: var(--gold);
     background: color-mix(in srgb, var(--gold) 10%, var(--espresso));
   }
 
-  .when {
+  :global(.ticket .when) {
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -502,16 +509,16 @@ const jsonLd = [
     max-width: 36ch;
   }
 
-  .ticket h3 {
+  :global(.ticket h3) {
     font-size: 2.4rem;
     margin: 0.45rem 0 0.35rem;
   }
 
-  .time {
+  :global(.ticket .time) {
     color: var(--cream-muted);
   }
 
-  .price {
+  :global(.ticket .price) {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
@@ -519,14 +526,14 @@ const jsonLd = [
     margin-top: 1.3rem;
   }
 
-  .price span {
+  :global(.ticket .price span) {
     font-family: var(--font-display);
     font-size: 3rem;
     color: var(--gold);
     line-height: 0.8;
   }
 
-  .price small {
+  :global(.ticket .price small) {
     color: var(--cream-muted);
     font-size: 0.88rem;
     max-width: 22rem;
@@ -600,7 +607,7 @@ const jsonLd = [
     }
 
     .hero-grid,
-    .tickets,
+    :global(.tickets),
     .locale,
     .visit {
       grid-template-columns: 1fr 1fr;
@@ -712,4 +719,84 @@ const jsonLd = [
     if (event.key === 'ArrowRight') show(index + 1);
     if (event.key === 'ArrowLeft') show(index - 1);
   });
+
+  type PromoItem = {
+    id: string;
+    title: string;
+    titleEn?: string;
+    when: string;
+    whenEn?: string;
+    time?: string;
+    price: string;
+    note?: string;
+    noteEn?: string;
+    highlight?: boolean;
+  };
+
+  const promoRoot = document.querySelector<HTMLElement>('[data-promozioni-root]');
+  if (promoRoot) {
+    const urls = ['/api/public/promozioni'];
+    const api = promoRoot.dataset.api;
+    if (api) urls.push(`${api}/api/public/promozioni`);
+    void loadPromozioni(promoRoot, urls);
+  }
+
+  async function loadPromozioni(el: HTMLElement, urls: string[]) {
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (!res.ok) continue;
+        const data = (await res.json()) as { promozioni?: PromoItem[] };
+        if (!Array.isArray(data.promozioni) || data.promozioni.length === 0) continue;
+        renderPromozioni(el, data.promozioni);
+        return;
+      } catch {
+        /* prova l'URL successivo */
+      }
+    }
+  }
+
+  function renderPromozioni(el: HTMLElement, items: PromoItem[]) {
+    const isEn = el.dataset.lang === 'en';
+    el.replaceChildren();
+    for (const item of items) {
+      const article = document.createElement('article');
+      article.className = item.highlight ? 'ticket featured' : 'ticket';
+
+      const when = document.createElement('p');
+      when.className = 'when';
+      when.textContent = isEn && item.whenEn ? item.whenEn : item.when;
+      article.append(when);
+
+      const h3 = document.createElement('h3');
+      h3.textContent = isEn && item.titleEn ? item.titleEn : item.title;
+      article.append(h3);
+
+      if (item.time) {
+        const time = document.createElement('p');
+        time.className = 'time';
+        time.textContent = item.time;
+        article.append(time);
+      }
+
+      const price = document.createElement('p');
+      price.className = 'price';
+      const span = document.createElement('span');
+      span.textContent = `${item.price}€`;
+      price.append(span);
+
+      const noteText = isEn && item.noteEn ? item.noteEn : item.note;
+      if (noteText) {
+        const small = document.createElement('small');
+        small.textContent = noteText;
+        price.append(small);
+      }
+
+      article.append(price);
+      el.append(article);
+    }
+  }
 </script>
